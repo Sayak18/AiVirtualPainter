@@ -23,6 +23,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="CANVAS.png" />
+    <Image Include="resources\CANVAS.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

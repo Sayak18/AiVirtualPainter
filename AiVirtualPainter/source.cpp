@@ -8,19 +8,15 @@ using namespace std;
 using namespace cv;
 Mat img;
 Mat canvas;
-//vector<Point> P;
 vector<vector<int>> newPoints;
-vector<vector<int>> myColors{ {117,69,31,146,255,255},//purple
-							   {11,111,168,55,229,255},//ORANGE
-							   {0,125,170,179,255,255} };// RED 
+vector<vector<int>> myColors{ {111,68,95,151,128,252},//purple
+							   {11,111,168,55,229,255} }; //ORANGE
+							   
 vector<Scalar> myColorValues{ {238,130,238},//purple
-								{0,69,255},//ORANGE
-	                              {0,0,255}};//rED
-//Mat imgGray, imgBlur, imgCanny, imgDil, imgErode;
+								{0,69,255} };//ORANGE
+	                              
+
 Point getContours(Mat imgDil) {
-	/*{{},
-	{},
-	{}}*/
 	vector<vector<Point>> contour;
 	vector<Vec4i> hierarchy;
 	findContours(imgDil, contour, hierarchy, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
@@ -41,7 +37,6 @@ Point getContours(Mat imgDil) {
 			myPoint.x = boundRect[i].x + boundRect[i].width/2;
 			myPoint.y = boundRect[i].y;
 			drawContours(img,contour,i,Scalar(0, 255, 140),2);
-			//rectangle(img, boundRect[i].tl(), boundRect[i].br(), Scalar(0, 255, 0), 5);
 		   
 		}
 	}
@@ -57,7 +52,6 @@ vector<vector<int>> findcolor(Mat img)
 		Scalar upper(myColors[i][3], myColors[i][4], myColors[i][5]);
 		inRange(imgHSV, lower, upper, mask);
 		Point myPoint = getContours(mask);
-		//imshow(to_string(i), mask);
 		if (myPoint.x != 0 && myPoint.y != 0) {
 			newPoints.push_back({ myPoint.x, myPoint.y, i
 				});
@@ -72,14 +66,13 @@ void draw_Canvas(vector<vector<int>> newPoints, vector<Scalar> myColorValues)
 	double d;
 	for (int i = 0; i < newPoints.size(); i++)
 	{
-		//P.push_back(Point(newPoints[i][0], newPoints[i][1]));
 		circle(canvas, Point(newPoints[i][0], newPoints[i][1]), 3, myColorValues[newPoints[i][2]], FILLED);
 		if (i > 0)
 		{
 			Point p = Point(newPoints[i - 1][0], newPoints[i - 1][1]);
 			Point q = Point(newPoints[i][0], newPoints[i][1]);
 			d = sqrt(pow((p.x-q.x), 2) + pow((p.y-q.y), 2));
-			if (d < 1000)
+			if (d < 70)
 			{
 				line(canvas, p, q, Scalar(myColorValues[newPoints[i][2]]),5,8);
 			}
@@ -90,19 +83,16 @@ void main()
 {
 	string path = "resources/CANVAS.png";
 	canvas = imread(path);
-	//imshow("Canvas", canvas);
-	VideoCapture cap(0);//0->id of camera 0 when we have only one webcam
+	VideoCapture cap(0);
 	while (true)
 	{
-		/*string path = "resource/CANVAS.png";
-		//Mat is a matrix data types introduced in open cv to handle all images
-		Mat board = imread(path);*/
 		cap.read(img);
+		flip(img, img, 1);
 		newPoints=findcolor(img);
 		draw_Canvas(newPoints, myColorValues);
 		imshow("Image", img);
 		imshow("Canvas", canvas);
-		waitKey(7);
+		waitKey(4);
 
 	}
 	
